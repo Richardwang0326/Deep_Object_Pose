@@ -16,7 +16,7 @@ import message_filters
 import numpy as np
 import resource_retriever
 import rospy
-import tf.transformations
+#import tf.transformations
 from PIL import Image
 from PIL import ImageDraw
 from cv_bridge import CvBridge
@@ -132,7 +132,8 @@ class DopeNode(object):
 
             try:
                 M = np.array(rospy.get_param('~model_transforms')[model], dtype='float64')
-                self.model_transforms[model] = tf.transformations.quaternion_from_matrix(M)
+                self.model_transforms[model] = np.array([0.0, 0.0, 0.0, 1.0], dtype='float64')
+                #self.model_transforms[model] = tf.transformations.quaternion_from_matrix(M)
             except KeyError:
                 self.model_transforms[model] = np.array([0.0, 0.0, 0.0, 1.0], dtype='float64')
 
@@ -266,7 +267,8 @@ class DopeNode(object):
                 ori = result["quaternion"]
 
                 # transform orientation
-                transformed_ori = tf.transformations.quaternion_multiply(ori, self.model_transforms[m])
+                #transformed_ori = tf.transformations.quaternion_multiply(ori, self.model_transforms[m])
+                transformed_ori = [0.0,0.0,0.0,1.0]
 
                 # rotate bbox dimensions if necessary
                 # (this only works properly if model_transform is in 90 degree angles)
@@ -393,11 +395,11 @@ class DopeNode(object):
 
 
 def rotate_vector(vector, quaternion):
-    q_conj = tf.transformations.quaternion_conjugate(quaternion)
+    #q_conj = tf.transformations.quaternion_conjugate(quaternion)
     vector = np.array(vector, dtype='float64')
     vector = np.append(vector, [0.0])
-    vector = tf.transformations.quaternion_multiply(q_conj, vector)
-    vector = tf.transformations.quaternion_multiply(vector, quaternion)
+    #vector = tf.transformations.quaternion_multiply(q_conj, vector)
+    #vector = tf.transformations.quaternion_multiply(vector, quaternion)
     return vector[:3]
 
 
